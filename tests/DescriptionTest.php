@@ -161,7 +161,7 @@ class DescriptionTest extends \PHPUnit_Framework_TestCase
             'name' => 'foo'
         )))));
         $s = new Description($desc);
-        $this->assertInstanceOf(Operation::class, $s->getOperation('foo'));
+        $this->assertInstanceOf('\Hough\Guzzle\Command\Guzzle\Operation', $s->getOperation('foo'));
         $this->assertSame($s->getOperation('foo'), $s->getOperation('foo'));
     }
 
@@ -173,7 +173,7 @@ class DescriptionTest extends \PHPUnit_Framework_TestCase
 
     public function testCanUseCustomFormatter()
     {
-        $formatter = $this->getMockBuilder(SchemaFormatter::class)
+        $formatter = $this->getMockBuilder('\Hough\Guzzle\Command\Guzzle\SchemaFormatter')
             ->setMethods(array('format'))
             ->getMock();
         $formatter->expects($this->once())
