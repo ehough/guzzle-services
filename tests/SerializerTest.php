@@ -33,7 +33,7 @@ class SerializerTest extends \PHPUnit_Framework_TestCase
         $command = new Command('test', array('key' => 'bar'));
         $serializer = new Serializer($description);
         /** @var Request $request */
-        $request = $serializer($command);
+        $request = call_user_func($serializer, $command);
         $this->assertEquals('http://test.com/api/bar/foo', $request->getUri());
     }
 }

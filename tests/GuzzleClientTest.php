@@ -721,7 +721,7 @@ class GuzzleClientTest extends \PHPUnit_Framework_TestCase
     private function getServiceClient(
         array $responses,
         MockHandler $mock = null,
-        callable $commandToRequestTransformer = null
+        $commandToRequestTransformer = null
     ) {
         $mock = $mock ?: new MockHandler();
 
