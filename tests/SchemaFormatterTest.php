@@ -39,7 +39,8 @@ class SchemaFormatterTest extends \PHPUnit_Framework_TestCase
      */
     public function testFilters($value, $format, $result)
     {
-        $this->assertEquals($result, (new SchemaFormatter)->format($format, $value));
+        $formatter = new SchemaFormatter();
+        $this->assertEquals($result, $formatter->format($format, $value));
     }
 
     /**
@@ -47,13 +48,15 @@ class SchemaFormatterTest extends \PHPUnit_Framework_TestCase
      */
     public function testValidatesDateTimeInput()
     {
-        (new SchemaFormatter)->format('date-time', false);
+        $formatter = new SchemaFormatter();
+        $formatter->format('date-time', false);
     }
 
     public function testEnsuresTimestampsAreIntegers()
     {
         $t = time();
-        $result = (new SchemaFormatter)->format('timestamp', $t);
+        $formatter = new SchemaFormatter();
+        $result = $formatter->format('timestamp', $t);
         $this->assertSame($t, $result);
         $this->assertInternalType('int', $result);
     }
