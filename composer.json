@@ -1,6 +1,6 @@
 {
-    "name": "guzzlehttp/guzzle-services",
-    "description": "Provides an implementation of the Guzzle Command library that uses Guzzle service descriptions to describe web services, serialize requests, and parse responses into easy to use model structures.",
+    "name": "ehough/guzzle-services",
+    "description": "PHP 5.3-compatible fork of Guzzle Services",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -18,10 +18,15 @@
             "name": "Stefano Kowalke",
             "email": "blueduck@mail.org",
             "homepage": "https://github.com/konafets"
+        },
+        {
+            "name": "Eric Hough",
+            "email": "eric@tubepress.com",
+            "homepage": "https://github.com/ehough"
         }
     ],
     "require": {
-        "php": ">=5.5",
+        "php": ">=5.3.29",
         "guzzlehttp/guzzle": "^6.2",
         "guzzlehttp/command": "~1.0"
     },
