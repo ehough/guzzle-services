@@ -1,10 +1,10 @@
 <?php
-namespace GuzzleHttp\Command\Guzzle\RequestLocation;
+namespace Hough\Guzzle\Command\Guzzle\RequestLocation;
 
-use GuzzleHttp\Command\CommandInterface;
-use GuzzleHttp\Command\Guzzle\Operation;
-use GuzzleHttp\Command\Guzzle\Parameter;
-use GuzzleHttp\Psr7;
+use Hough\Guzzle\Command\CommandInterface;
+use Hough\Guzzle\Command\Guzzle\Operation;
+use Hough\Guzzle\Command\Guzzle\Parameter;
+use Hough\Psr7;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
 
@@ -47,7 +47,7 @@ class JsonLocation extends AbstractLocation
             $param
         );
 
-        return $request->withBody(Psr7\stream_for(\GuzzleHttp\json_encode($this->jsonData)));
+        return $request->withBody(Psr7\stream_for(\Hough\Guzzle\json_encode($this->jsonData)));
     }
 
     /**
@@ -63,7 +63,7 @@ class JsonLocation extends AbstractLocation
         Operation $operation
     ) {
         $data = $this->jsonData;
-        $this->jsonData = [];
+        $this->jsonData = array();
 
         // Add additional parameters to the JSON document
         $additional = $operation->getAdditionalParameters();
@@ -80,6 +80,6 @@ class JsonLocation extends AbstractLocation
             $request = $request->withHeader('Content-Type', $this->jsonContentType);
         }
 
-        return $request->withBody(Psr7\stream_for(\GuzzleHttp\json_encode($data)));
+        return $request->withBody(Psr7\stream_for(\Hough\Guzzle\json_encode($data)));
     }
 }

@@ -1,11 +1,11 @@
 <?php
-namespace GuzzleHttp\Command\Guzzle;
+namespace Hough\Guzzle\Command\Guzzle;
 
-use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Command\CommandInterface;
-use GuzzleHttp\Command\Guzzle\Handler\ValidatedDescriptionHandler;
-use GuzzleHttp\Command\ServiceClient;
-use GuzzleHttp\HandlerStack;
+use Hough\Guzzle\ClientInterface;
+use Hough\Guzzle\Command\CommandInterface;
+use Hough\Guzzle\Command\Guzzle\Handler\ValidatedDescriptionHandler;
+use Hough\Guzzle\Command\ServiceClient;
+use Hough\Guzzle\HandlerStack;
 
 /**
  * Default Guzzle web service client implementation.
@@ -46,7 +46,7 @@ class GuzzleClient extends ServiceClient
         callable $commandToRequestTransformer = null,
         callable $responseToResultTransformer = null,
         HandlerStack $commandHandlerStack = null,
-        array $config = []
+        array $config = array()
     ) {
         $this->config = $config;
         $this->description = $description;
@@ -64,7 +64,7 @@ class GuzzleClient extends ServiceClient
      * @return CommandInterface
      * @throws \InvalidArgumentException
      */
-    public function getCommand($name, array $args = [])
+    public function getCommand($name, array $args = array())
     {
         if (!$this->description->hasOperation($name)) {
             $name = ucfirst($name);
@@ -95,7 +95,7 @@ class GuzzleClient extends ServiceClient
      * Returns the passed Serializer when set, a new instance otherwise
      *
      * @param callable|null $commandToRequestTransformer
-     * @return \GuzzleHttp\Command\Guzzle\Serializer
+     * @return \Hough\Guzzle\Command\Guzzle\Serializer
      */
     private function getSerializer($commandToRequestTransformer)
     {
@@ -108,7 +108,7 @@ class GuzzleClient extends ServiceClient
      * Returns the passed Deserializer when set, a new instance otherwise
      *
      * @param callable|null $responseToResultTransformer
-     * @return \GuzzleHttp\Command\Guzzle\Deserializer
+     * @return \Hough\Guzzle\Command\Guzzle\Deserializer
      */
     private function getDeserializer($responseToResultTransformer)
     {
@@ -129,7 +129,7 @@ class GuzzleClient extends ServiceClient
     {
         return $option === null
             ? $this->config
-            : (isset($this->config[$option]) ? $this->config[$option] : []);
+            : (isset($this->config[$option]) ? $this->config[$option] : array());
     }
 
     /**
@@ -150,7 +150,7 @@ class GuzzleClient extends ServiceClient
     {
         // set defaults as an array if not provided
         if (!isset($config['defaults'])) {
-            $config['defaults'] = [];
+            $config['defaults'] = array();
         }
 
         // Add the handlers based on the configuration option

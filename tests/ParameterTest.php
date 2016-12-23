@@ -1,15 +1,15 @@
 <?php
 namespace Guzzle\Tests\Service\Description;
 
-use GuzzleHttp\Command\Guzzle\Description;
-use GuzzleHttp\Command\Guzzle\Parameter;
+use Hough\Guzzle\Command\Guzzle\Description;
+use Hough\Guzzle\Command\Guzzle\Parameter;
 
 /**
- * @covers \GuzzleHttp\Command\Guzzle\Parameter
+ * @covers \Hough\Guzzle\Command\Guzzle\Parameter
  */
 class ParameterTest extends \PHPUnit_Framework_TestCase
 {
-    protected $data = [
+    protected $data = array(
         'name'            => 'foo',
         'type'            => 'bar',
         'required'        => true,
@@ -19,8 +19,8 @@ class ParameterTest extends \PHPUnit_Framework_TestCase
         'maxLength'       => 5,
         'location'        => 'body',
         'static'          => true,
-        'filters'         => ['trim', 'json_encode']
-    ];
+        'filters'         => array('trim', 'json_encode')
+    );
 
     public function testCreatesParamFromArray()
     {
@@ -34,7 +34,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(5, $p->getMaxLength());
         $this->assertEquals('body', $p->getLocation());
         $this->assertTrue($p->isStatic());
-        $this->assertEquals(['trim', 'json_encode'], $p->getFilters());
+        $this->assertEquals(array('trim', 'json_encode'), $p->getFilters());
         $p->setName('abc');
         $this->assertEquals('abc', $p->getName());
     }
@@ -44,7 +44,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase
      */
     public function testValidatesDescription()
     {
-        new Parameter($this->data, ['description' => 'foo']);
+        new Parameter($this->data, array('description' => 'foo'));
     }
 
     public function testCanConvertToArray()
@@ -111,7 +111,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase
 
     public function testConvertsBooleans()
     {
-        $p = new Parameter(['type' => 'boolean']);
+        $p = new Parameter(array('type' => 'boolean'));
         $this->assertEquals(true, $p->filter('true'));
         $this->assertEquals(false, $p->filter('false'));
     }
@@ -121,19 +121,19 @@ class ParameterTest extends \PHPUnit_Framework_TestCase
         $d = $this->data;
         $d['filters'] = null;
         $p = new Parameter($d);
-        $this->assertEquals([], $p->getFilters());
+        $this->assertEquals(array(), $p->getFilters());
     }
 
     public function testAllowsSimpleLocationValue()
     {
-        $p = new Parameter(['name' => 'myname', 'location' => 'foo', 'sentAs' => 'Hello']);
+        $p = new Parameter(array('name' => 'myname', 'location' => 'foo', 'sentAs' => 'Hello'));
         $this->assertEquals('foo', $p->getLocation());
         $this->assertEquals('Hello', $p->getSentAs());
     }
 
     public function testParsesTypeValues()
     {
-        $p = new Parameter(['type' => 'foo']);
+        $p = new Parameter(array('type' => 'foo'));
         $this->assertEquals('foo', $p->getType());
     }
 
@@ -143,15 +143,15 @@ class ParameterTest extends \PHPUnit_Framework_TestCase
      */
     public function testValidatesComplexFilters()
     {
-        $p = new Parameter(['filters' => [['args' => 'foo']]]);
+        $p = new Parameter(array('filters' => array(array('args' => 'foo'))));
     }
 
     public function testAllowsComplexFilters()
     {
         $that = $this;
-        $param = new Parameter([
-            'filters' => [
-                [
+        $param = new Parameter(array(
+            'filters' => array(
+                array(
                     'method' => function ($a, $b, $c, $d) use ($that, &$param) {
                         $that->assertEquals('test', $a);
                         $that->assertEquals('my_value!', $b);
@@ -159,33 +159,33 @@ class ParameterTest extends \PHPUnit_Framework_TestCase
                         $that->assertSame($param, $d);
                         return 'abc' . $b;
                     },
-                    'args' => ['test', '@value', 'bar', '@api']
-                ]
-            ]
-        ]);
+                    'args' => array('test', '@value', 'bar', '@api')
+                )
+            )
+        ));
 
         $this->assertEquals('abcmy_value!', $param->filter('my_value!'));
     }
 
     public function testAddsAdditionalProperties()
     {
-        $p = new Parameter([
+        $p = new Parameter(array(
             'type' => 'object',
-            'additionalProperties' => ['type' => 'string']
-        ]);
-        $this->assertInstanceOf('GuzzleHttp\Command\Guzzle\Parameter', $p->getAdditionalProperties());
+            'additionalProperties' => array('type' => 'string')
+        ));
+        $this->assertInstanceOf('Hough\Guzzle\Command\Guzzle\Parameter', $p->getAdditionalProperties());
         $this->assertNull($p->getAdditionalProperties()->getAdditionalProperties());
-        $p = new Parameter(['type' => 'object']);
+        $p = new Parameter(array('type' => 'object'));
         $this->assertTrue($p->getAdditionalProperties());
     }
 
     public function testAddsItems()
     {
-        $p = new Parameter([
+        $p = new Parameter(array(
             'type'  => 'array',
-            'items' => ['type' => 'string']
-        ]);
-        $this->assertInstanceOf('GuzzleHttp\Command\Guzzle\Parameter', $p->getItems());
+            'items' => array('type' => 'string')
+        ));
+        $this->assertInstanceOf('Hough\Guzzle\Command\Guzzle\Parameter', $p->getItems());
         $out = $p->toArray();
         $this->assertEquals('array', $out['type']);
         $this->assertInternalType('array', $out['items']);
@@ -193,104 +193,104 @@ class ParameterTest extends \PHPUnit_Framework_TestCase
 
     public function testCanRetrieveKnownPropertiesUsingDataMethod()
     {
-        $p = new Parameter(['data' => ['name' => 'test'], 'extra' => 'hi!']);
+        $p = new Parameter(array('data' => array('name' => 'test'), 'extra' => 'hi!'));
         $this->assertEquals('test', $p->getData('name'));
-        $this->assertEquals(['name' => 'test'], $p->getData());
+        $this->assertEquals(array('name' => 'test'), $p->getData());
         $this->assertNull($p->getData('fjnweefe'));
         $this->assertEquals('hi!', $p->getData('extra'));
     }
 
     public function testHasPattern()
     {
-        $p = new Parameter(['pattern' => '/[0-9]+/']);
+        $p = new Parameter(array('pattern' => '/[0-9]+/'));
         $this->assertEquals('/[0-9]+/', $p->getPattern());
     }
 
     public function testHasEnum()
     {
-        $p = new Parameter(['enum' => ['foo', 'bar']]);
-        $this->assertEquals(['foo', 'bar'], $p->getEnum());
+        $p = new Parameter(array('enum' => array('foo', 'bar')));
+        $this->assertEquals(array('foo', 'bar'), $p->getEnum());
     }
 
     public function testSerializesItems()
     {
-        $p = new Parameter([
+        $p = new Parameter(array(
             'type'  => 'object',
-            'additionalProperties' => ['type' => 'string']
-        ]);
-        $this->assertEquals([
+            'additionalProperties' => array('type' => 'string')
+        ));
+        $this->assertEquals(array(
             'type'  => 'object',
-            'additionalProperties' => ['type' => 'string']
-        ], $p->toArray());
+            'additionalProperties' => array('type' => 'string')
+        ), $p->toArray());
     }
 
     public function testResolvesRefKeysRecursively()
     {
-        $description = new Description([
-            'models' => [
-                'JarJar' => ['type' => 'string', 'default' => 'Mesa address tha senate!'],
-                'Anakin' => ['type' => 'array', 'items' => ['$ref' => 'JarJar']]
-            ],
-        ]);
-        $p = new Parameter(['$ref' => 'Anakin', 'description' => 'added'], ['description' => $description]);
-        $this->assertEquals([
+        $description = new Description(array(
+            'models' => array(
+                'JarJar' => array('type' => 'string', 'default' => 'Mesa address tha senate!'),
+                'Anakin' => array('type' => 'array', 'items' => array('$ref' => 'JarJar'))
+            ),
+        ));
+        $p = new Parameter(array('$ref' => 'Anakin', 'description' => 'added'), array('description' => $description));
+        $this->assertEquals(array(
             'description' => 'added',
             '$ref' => 'Anakin'
-        ], $p->toArray());
+        ), $p->toArray());
     }
 
     public function testResolvesExtendsRecursively()
     {
-        $jarJar = ['type' => 'string', 'default' => 'Mesa address tha senate!', 'description' => 'a'];
-        $anakin = ['type' => 'array', 'items' => ['extends' => 'JarJar', 'description' => 'b']];
-        $description = new Description([
-            'models' => ['JarJar' => $jarJar, 'Anakin' => $anakin]
-        ]);
+        $jarJar = array('type' => 'string', 'default' => 'Mesa address tha senate!', 'description' => 'a');
+        $anakin = array('type' => 'array', 'items' => array('extends' => 'JarJar', 'description' => 'b'));
+        $description = new Description(array(
+            'models' => array('JarJar' => $jarJar, 'Anakin' => $anakin)
+        ));
         // Description attribute will be updated, and format added
-        $p = new Parameter(['extends' => 'Anakin', 'format' => 'date'], ['description' => $description]);
-        $this->assertEquals([
+        $p = new Parameter(array('extends' => 'Anakin', 'format' => 'date'), array('description' => $description));
+        $this->assertEquals(array(
             'format' => 'date',
             'extends' => 'Anakin'
-        ], $p->toArray());
+        ), $p->toArray());
     }
 
     public function testHasKeyMethod()
     {
-        $p = new Parameter(['name' => 'foo', 'sentAs' => 'bar']);
+        $p = new Parameter(array('name' => 'foo', 'sentAs' => 'bar'));
         $this->assertEquals('bar', $p->getWireName());
     }
 
     public function testIncludesNameInToArrayWhenItemsAttributeHasName()
     {
-        $p = new Parameter([
+        $p = new Parameter(array(
             'type' => 'array',
             'name' => 'Abc',
-            'items' => [
+            'items' => array(
                 'name' => 'Foo',
                 'type' => 'object'
-            ]
-        ]);
+            )
+        ));
         $result = $p->toArray();
-        $this->assertEquals([
+        $this->assertEquals(array(
             'type' => 'array',
             'name' => 'Abc',
-            'items' => [
+            'items' => array(
                 'name' => 'Foo',
                 'type' => 'object'
-            ]
-        ], $result);
+            )
+        ), $result);
     }
 
     public function dateTimeProvider()
     {
         $d = 'October 13, 2012 16:15:46 UTC';
 
-        return [
-            [$d, 'date-time', '2012-10-13T16:15:46Z'],
-            [$d, 'date', '2012-10-13'],
-            [$d, 'timestamp', strtotime($d)],
-            [new \DateTime($d), 'timestamp', strtotime($d)]
-        ];
+        return array(
+            array($d, 'date-time', '2012-10-13T16:15:46Z'),
+            array($d, 'date', '2012-10-13'),
+            array($d, 'timestamp', strtotime($d)),
+            array(new \DateTime($d), 'timestamp', strtotime($d))
+        );
     }
 
     /**
@@ -298,19 +298,19 @@ class ParameterTest extends \PHPUnit_Framework_TestCase
      */
     public function testAppliesFormat($d, $format, $result)
     {
-        $p = new Parameter(['format' => $format], ['description' => new Description([])]);
+        $p = new Parameter(array('format' => $format), array('description' => new Description(array())));
         $this->assertEquals($format, $p->getFormat());
         $this->assertEquals($result, $p->filter($d));
     }
 
     public function testHasMinAndMax()
     {
-        $p = new Parameter([
+        $p = new Parameter(array(
             'minimum' => 2,
             'maximum' => 3,
             'minItems' => 4,
             'maxItems' => 5,
-        ]);
+        ));
         $this->assertEquals(2, $p->getMinimum());
         $this->assertEquals(3, $p->getMaximum());
         $this->assertEquals(4, $p->getMinItems());
@@ -319,22 +319,22 @@ class ParameterTest extends \PHPUnit_Framework_TestCase
 
     public function testHasProperties()
     {
-        $data = [
+        $data = array(
             'type' => 'object',
-            'properties' => [
-                'foo' => ['type' => 'string'],
-                'bar' => ['type' => 'string'],
-            ]
-        ];
+            'properties' => array(
+                'foo' => array('type' => 'string'),
+                'bar' => array('type' => 'string'),
+            )
+        );
         $p = new Parameter($data);
-        $this->assertInstanceOf('GuzzleHttp\\Command\\Guzzle\\Parameter', $p->getProperty('foo'));
+        $this->assertInstanceOf('Hough\\Guzzle\\Command\\Guzzle\\Parameter', $p->getProperty('foo'));
         $this->assertSame($p->getProperty('foo'), $p->getProperty('foo'));
         $this->assertNull($p->getProperty('wefwe'));
 
         $properties = $p->getProperties();
         $this->assertInternalType('array', $properties);
         foreach ($properties as $prop) {
-            $this->assertInstanceOf('GuzzleHttp\\Command\\Guzzle\\Parameter', $prop);
+            $this->assertInstanceOf('Hough\\Guzzle\\Command\\Guzzle\\Parameter', $prop);
         }
 
         $this->assertEquals($data, $p->toArray());
@@ -347,7 +347,7 @@ class ParameterTest extends \PHPUnit_Framework_TestCase
     public function testThrowsWhenNotPassString()
     {
         $emptyParam = new Parameter();
-        $this->assertFalse($emptyParam->has([]));
+        $this->assertFalse($emptyParam->has(array()));
         $this->assertFalse($emptyParam->has(new \stdClass()));
         $this->assertFalse($emptyParam->has('1'));
         $this->assertFalse($emptyParam->has(1));
@@ -363,12 +363,12 @@ class ParameterTest extends \PHPUnit_Framework_TestCase
 
     public function testHasReturnsTrueForCorrectValues()
     {
-        $p = new Parameter([
+        $p = new Parameter(array(
             'minimum' => 2,
             'maximum' => 3,
             'minItems' => 4,
             'maxItems' => 5,
-        ]);
+        ));
 
         $this->assertTrue($p->has('minimum'));
         $this->assertTrue($p->has('maximum'));

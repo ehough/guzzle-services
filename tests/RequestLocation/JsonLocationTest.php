@@ -1,15 +1,15 @@
 <?php
-namespace GuzzleHttp\Tests\Command\Guzzle\RequestLocation;
+namespace Hough\Guzzle\Tests\Command\Guzzle\RequestLocation;
 
-use GuzzleHttp\Command\Command;
-use GuzzleHttp\Command\Guzzle\Operation;
-use GuzzleHttp\Command\Guzzle\Parameter;
-use GuzzleHttp\Command\Guzzle\RequestLocation\JsonLocation;
-use GuzzleHttp\Psr7\Request;
+use Hough\Guzzle\Command\Command;
+use Hough\Guzzle\Command\Guzzle\Operation;
+use Hough\Guzzle\Command\Guzzle\Parameter;
+use Hough\Guzzle\Command\Guzzle\RequestLocation\JsonLocation;
+use Hough\Psr7\Request;
 
 /**
- * @covers \GuzzleHttp\Command\Guzzle\RequestLocation\JsonLocation
- * @covers \GuzzleHttp\Command\Guzzle\RequestLocation\AbstractLocation
+ * @covers \Hough\Guzzle\Command\Guzzle\RequestLocation\JsonLocation
+ * @covers \Hough\Guzzle\Command\Guzzle\RequestLocation\AbstractLocation
  */
 class JsonLocationTest extends \PHPUnit_Framework_TestCase
 {
@@ -19,14 +19,14 @@ class JsonLocationTest extends \PHPUnit_Framework_TestCase
     public function testVisitsLocation()
     {
         $location = new JsonLocation('json');
-        $command = new Command('foo', ['foo' => 'bar']);
+        $command = new Command('foo', array('foo' => 'bar'));
         $request = new Request('POST', 'http://httbin.org');
-        $param = new Parameter(['name' => 'foo']);
+        $param = new Parameter(array('name' => 'foo'));
         $location->visit($command, $request, $param);
         $operation = new Operation();
         $request = $location->after($command, $request, $operation);
         $this->assertEquals('{"foo":"bar"}', $request->getBody()->getContents());
-        $this->assertArraySubset([0 => 'application/json'], $request->getHeader('Content-Type'));
+        $this->assertArraySubset(array(0 => 'application/json'), $request->getHeader('Content-Type'));
     }
 
     /**
@@ -35,19 +35,19 @@ class JsonLocationTest extends \PHPUnit_Framework_TestCase
     public function testVisitsAdditionalProperties()
     {
         $location = new JsonLocation('json', 'foo');
-        $command = new Command('foo', ['foo' => 'bar']);
-        $command['baz'] = ['bam' => [1]];
+        $command = new Command('foo', array('foo' => 'bar'));
+        $command['baz'] = array('bam' => array(1));
         $request = new Request('POST', 'http://httbin.org');
-        $param = new Parameter(['name' => 'foo']);
+        $param = new Parameter(array('name' => 'foo'));
         $location->visit($command, $request, $param);
-        $operation = new Operation([
-            'additionalParameters' => [
+        $operation = new Operation(array(
+            'additionalParameters' => array(
                 'location' => 'json'
-            ]
-        ]);
+            )
+        ));
         $request = $location->after($command, $request, $operation);
         $this->assertEquals('{"foo":"bar","baz":{"bam":[1]}}', $request->getBody()->getContents());
-        $this->assertEquals([0 => 'foo'], $request->getHeader('Content-Type'));
+        $this->assertEquals(array(0 => 'foo'), $request->getHeader('Content-Type'));
     }
 
     /**
@@ -56,36 +56,36 @@ class JsonLocationTest extends \PHPUnit_Framework_TestCase
     public function testVisitsNestedLocation()
     {
         $location = new JsonLocation('json');
-        $command = new Command('foo', ['foo' => 'bar']);
+        $command = new Command('foo', array('foo' => 'bar'));
         $request = new Request('POST', 'http://httbin.org');
-        $param = new Parameter([
+        $param = new Parameter(array(
             'name' => 'foo',
             'type' => 'object',
-            'properties' => [
-                'baz' => [
+            'properties' => array(
+                'baz' => array(
                     'type' => 'array',
-                    'items' => [
+                    'items' => array(
                         'type' => 'string',
-                        'filters' => ['strtoupper']
-                    ]
-                ]
-            ],
-            'additionalProperties' => [
+                        'filters' => array('strtoupper')
+                    )
+                )
+            ),
+            'additionalProperties' => array(
                 'type' => 'array',
-                'items' => [
+                'items' => array(
                     'type' => 'string',
-                    'filters' => ['strtolower']
-                ]
-            ]
-        ]);
-        $command['foo'] = [
-            'baz' => ['a', 'b'],
-            'bam' => ['A', 'B'],
-        ];
+                    'filters' => array('strtolower')
+                )
+            )
+        ));
+        $command['foo'] = array(
+            'baz' => array('a', 'b'),
+            'bam' => array('A', 'B'),
+        );
         $location->visit($command, $request, $param);
         $operation = new Operation();
         $request = $location->after($command, $request, $operation);
         $this->assertEquals('{"foo":{"baz":["A","B"],"bam":["a","b"]}}', (string) $request->getBody()->getContents());
-        $this->assertEquals([0 => 'application/json'], $request->getHeader('Content-Type'));
+        $this->assertEquals(array(0 => 'application/json'), $request->getHeader('Content-Type'));
     }
 }

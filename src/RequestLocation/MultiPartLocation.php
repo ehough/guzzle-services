@@ -1,9 +1,9 @@
 <?php
-namespace GuzzleHttp\Command\Guzzle\RequestLocation;
+namespace Hough\Guzzle\Command\Guzzle\RequestLocation;
 
-use GuzzleHttp\Command\CommandInterface;
-use GuzzleHttp\Command\Guzzle\Parameter;
-use GuzzleHttp\Psr7;
+use Hough\Guzzle\Command\CommandInterface;
+use Hough\Guzzle\Command\Guzzle\Parameter;
+use Hough\Psr7;
 use Psr\Http\Message\RequestInterface;
 
 /**
@@ -15,7 +15,7 @@ class MultiPartLocation extends AbstractLocation
     protected $contentType = 'multipart/form-data; boundary=';
 
     /** @var array $formParamsData */
-    protected $multipartData = [];
+    protected $multipartData = array();
 
     /**
      * Set the name of the location
@@ -38,12 +38,12 @@ class MultiPartLocation extends AbstractLocation
         RequestInterface $request,
         Parameter $param
     ) {
-        $modify = [];
+        $modify = array();
 
-        $this->multipartData['multipart'] = [
+        $this->multipartData['multipart'] = array(
             'name' => $param->getWireName(),
             'contents' => $this->prepareValue($command[$param->getName()], $param)
-        ];
+        );
 
         $body = new Psr7\MultipartStream($this->multipartData);
         $modify['body'] = Psr7\stream_for($body);

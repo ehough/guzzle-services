@@ -1,22 +1,18 @@
 <?php
-namespace GuzzleHttp\Tests\Command\Guzzle;
+namespace Hough\Guzzle\Tests\Command\Guzzle;
 
-use GuzzleHttp\Client as HttpClient;
-use GuzzleHttp\Command\CommandInterface;
-use GuzzleHttp\Command\Guzzle\Description;
-use GuzzleHttp\Command\Guzzle\DescriptionInterface;
-use GuzzleHttp\Command\Guzzle\GuzzleClient;
-use GuzzleHttp\Command\Guzzle\Operation;
-use GuzzleHttp\Command\ServiceClientInterface;
-use GuzzleHttp\Handler\MockHandler;
-use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Psr7\Response;
-use GuzzleHttp\Tests\Command\Guzzle\Asset\Exception\CustomCommandException;
-use GuzzleHttp\Tests\Command\Guzzle\Asset\Exception\OtherCustomCommandException;
-use Predis\Response\ResponseInterface;
+use Hough\Guzzle\Client as HttpClient;
+use Hough\Guzzle\Command\CommandInterface;
+use Hough\Guzzle\Command\Guzzle\Description;
+use Hough\Guzzle\Command\Guzzle\GuzzleClient;
+use Hough\Guzzle\Command\Guzzle\Operation;
+use Hough\Guzzle\Command\ServiceClientInterface;
+use Hough\Guzzle\Handler\MockHandler;
+use Hough\Guzzle\HandlerStack;
+use Hough\Psr7\Response;
 
 /**
- * @covers \GuzzleHttp\Command\Guzzle\Deserializer
+ * @covers \Hough\Guzzle\Command\Guzzle\Deserializer
  */
 class DeserializerTest extends \PHPUnit_Framework_TestCase
 {
@@ -28,18 +24,18 @@ class DeserializerTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->serviceClient = $this->getMockBuilder(GuzzleClient::class)
+        $this->serviceClient = $this->getMockBuilder('\Hough\Guzzle\Command\Guzzle\GuzzleClient')
                             ->disableOriginalConstructor()
                             ->getMock();
-        $this->command = $this->getMockBuilder(CommandInterface::class)->getMock();
+        $this->command = $this->getMockBuilder('\Hough\Guzzle\Command\CommandInterface')->getMock();
     }
 
-    protected function prepareErrorResponses($commandName, array $errors = [])
+    protected function prepareErrorResponses($commandName, array $errors = array())
     {
         $this->command->expects($this->once())->method('getName')->will($this->returnValue($commandName));
 
-        $description = $this->getMockBuilder(DescriptionInterface::class)->getMock();
-        $operation = new Operation(['errorResponses' => $errors], $description);
+        $description = $this->getMockBuilder('\Hough\Guzzle\Command\Guzzle\DescriptionInterface')->getMock();
+        $operation = new Operation(array('errorResponses' => $errors), $description);
 
         $description->expects($this->once())
             ->method('getOperation')
@@ -53,247 +49,247 @@ class DeserializerTest extends \PHPUnit_Framework_TestCase
 
     public function testDoNothingIfNoException()
     {
-        $mock = new MockHandler([new Response(200)]);
-        $description = new Description([
-            'operations' => [
-                'foo' => [
+        $mock = new MockHandler(array(new Response(200)));
+        $description = new Description(array(
+            'operations' => array(
+                'foo' => array(
                     'uri' => 'http://httpbin.org/{foo}',
                     'httpMethod' => 'GET',
                     'responseModel' => 'j',
-                    'parameters' => [
-                        'bar' => [
+                    'parameters' => array(
+                        'bar' => array(
                             'type'     => 'string',
                             'required' => true,
                             'location' => 'uri'
-                        ]
-                    ]
-                ]
-            ],
-            'models' => [
-                'j' => [
+                        )
+                    )
+                )
+            ),
+            'models' => array(
+                'j' => array(
                     'type' => 'object'
-                ]
-            ]
-        ]);
-        $httpClient = new HttpClient(['handler' => $mock]);
+                )
+            )
+        ));
+        $httpClient = new HttpClient(array('handler' => $mock));
         $client = new GuzzleClient($httpClient, $description);
-        $client->foo(['bar' => 'baz']);
+        $client->foo(array('bar' => 'baz'));
     }
 
     /**
-     * @expectedException \GuzzleHttp\Tests\Command\Guzzle\Asset\Exception\CustomCommandException
+     * @expectedException \Hough\Guzzle\Tests\Command\Guzzle\Asset\Exception\CustomCommandException
      */
     public function testCreateExceptionWithCode()
     {
         $response = new Response(404);
-        $mock = new MockHandler([$response]);
+        $mock = new MockHandler(array($response));
 
-        $description = new Description([
+        $description = new Description(array(
             'name' => 'Test API',
             'baseUri' => 'http://httpbin.org',
-            'operations' => [
-                'foo' => [
+            'operations' => array(
+                'foo' => array(
                     'uri' => '/{foo}',
                     'httpMethod' => 'GET',
                     'responseClass' => 'Foo',
-                    'parameters' => [
-                        'bar' => [
+                    'parameters' => array(
+                        'bar' => array(
                             'type'     => 'string',
                             'required' => true,
                             'description' => 'Unique user name (alphanumeric)',
                             'location' => 'json'
-                        ],
-                    ],
-                    'errorResponses' => [
-                        ['code' => 404, 'class' => CustomCommandException::class]
-                    ]
-                ]
-            ],
-            'models' => [
-                'Foo' => [
+                        ),
+                    ),
+                    'errorResponses' => array(
+                        array('code' => 404, 'class' => '\Hough\Guzzle\Tests\Command\Guzzle\Asset\Exception\CustomCommandException')
+                    )
+                )
+            ),
+            'models' => array(
+                'Foo' => array(
                     'type' => 'object',
-                    'additionalProperties' => [
+                    'additionalProperties' => array(
                         'location' => 'json'
-                    ]
-                ]
-            ]
-        ]);
+                    )
+                )
+            )
+        ));
 
-        $httpClient = new HttpClient(['handler' => $mock]);
+        $httpClient = new HttpClient(array('handler' => $mock));
         $client = new GuzzleClient($httpClient, $description);
-        $client->foo(['bar' => 'baz']);
+        $client->foo(array('bar' => 'baz'));
     }
 
     public function testNotCreateExceptionIfDoesNotMatchCode()
     {
         $response = new Response(401);
-        $mock = new MockHandler([$response]);
+        $mock = new MockHandler(array($response));
 
-        $description = new Description([
+        $description = new Description(array(
             'name' => 'Test API',
             'baseUri' => 'http://httpbin.org',
-            'operations' => [
-                'foo' => [
+            'operations' => array(
+                'foo' => array(
                     'uri' => '/{foo}',
                     'httpMethod' => 'GET',
                     'responseClass' => 'Foo',
-                    'parameters' => [
-                        'bar' => [
+                    'parameters' => array(
+                        'bar' => array(
                             'type'     => 'string',
                             'required' => true,
                             'description' => 'Unique user name (alphanumeric)',
                             'location' => 'json'
-                        ],
-                    ],
-                    'errorResponses' => [
-                        ['code' => 404, 'class' => CustomCommandException::class]
-                    ]
-                ]
-            ],
-            'models' => [
-                'Foo' => [
+                        ),
+                    ),
+                    'errorResponses' => array(
+                        array('code' => 404, 'class' => '\Hough\Guzzle\Tests\Command\Guzzle\Asset\Exception\CustomCommandException')
+                    )
+                )
+            ),
+            'models' => array(
+                'Foo' => array(
                     'type' => 'object',
-                    'additionalProperties' => [
+                    'additionalProperties' => array(
                         'location' => 'json'
-                    ]
-                ]
-            ]
-        ]);
+                    )
+                )
+            )
+        ));
 
-        $httpClient = new HttpClient(['handler' => $mock]);
+        $httpClient = new HttpClient(array('handler' => $mock));
         $client = new GuzzleClient($httpClient, $description);
-        $client->foo(['bar' => 'baz']);
+        $client->foo(array('bar' => 'baz'));
     }
 
     /**
-     * @expectedException \GuzzleHttp\Tests\Command\Guzzle\Asset\Exception\CustomCommandException
+     * @expectedException \Hough\Guzzle\Tests\Command\Guzzle\Asset\Exception\CustomCommandException
      */
     public function testCreateExceptionWithExactMatchOfReasonPhrase()
     {
-        $response = new Response(404, [], null, '1.1', 'Bar');
-        $mock = new MockHandler([$response]);
+        $response = new Response(404, array(), null, '1.1', 'Bar');
+        $mock = new MockHandler(array($response));
 
-        $description = new Description([
+        $description = new Description(array(
             'name' => 'Test API',
             'baseUri' => 'http://httpbin.org',
-            'operations' => [
-                'foo' => [
+            'operations' => array(
+                'foo' => array(
                     'uri' => '/{foo}',
                     'httpMethod' => 'GET',
                     'responseClass' => 'Foo',
-                    'parameters' => [
-                        'bar' => [
+                    'parameters' => array(
+                        'bar' => array(
                             'type'     => 'string',
                             'required' => true,
                             'description' => 'Unique user name (alphanumeric)',
                             'location' => 'json'
-                        ],
-                    ],
-                    'errorResponses' => [
-                        ['code' => 404, 'phrase' => 'Bar', 'class' => CustomCommandException::class]
-                    ]
-                ]
-            ],
-            'models' => [
-                'Foo' => [
+                        ),
+                    ),
+                    'errorResponses' => array(
+                        array('code' => 404, 'phrase' => 'Bar', 'class' => '\Hough\Guzzle\Tests\Command\Guzzle\Asset\Exception\CustomCommandException')
+                    )
+                )
+            ),
+            'models' => array(
+                'Foo' => array(
                     'type' => 'object',
-                    'additionalProperties' => [
+                    'additionalProperties' => array(
                         'location' => 'json'
-                    ]
-                ]
-            ]
-        ]);
+                    )
+                )
+            )
+        ));
 
-        $httpClient = new HttpClient(['handler' => $mock]);
+        $httpClient = new HttpClient(array('handler' => $mock));
         $client = new GuzzleClient($httpClient, $description);
-        $client->foo(['bar' => 'baz']);
+        $client->foo(array('bar' => 'baz'));
     }
 
     /**
-     * @expectedException \GuzzleHttp\Tests\Command\Guzzle\Asset\Exception\OtherCustomCommandException
+     * @expectedException \Hough\Guzzle\Tests\Command\Guzzle\Asset\Exception\OtherCustomCommandException
      */
     public function testFavourMostPreciseMatch()
     {
-        $response = new Response(404, [], null, '1.1', 'Bar');
-        $mock = new MockHandler([$response]);
+        $response = new Response(404, array(), null, '1.1', 'Bar');
+        $mock = new MockHandler(array($response));
 
-        $description = new Description([
+        $description = new Description(array(
             'name' => 'Test API',
             'baseUri' => 'http://httpbin.org',
-            'operations' => [
-                'foo' => [
+            'operations' => array(
+                'foo' => array(
                     'uri' => '/{foo}',
                     'httpMethod' => 'GET',
                     'responseClass' => 'Foo',
-                    'parameters' => [
-                        'bar' => [
+                    'parameters' => array(
+                        'bar' => array(
                             'type'     => 'string',
                             'required' => true,
                             'description' => 'Unique user name (alphanumeric)',
                             'location' => 'json'
-                        ],
-                    ],
-                    'errorResponses' => [
-                        ['code' => 404, 'class' => CustomCommandException::class],
-                        ['code' => 404, 'phrase' => 'Bar', 'class' => OtherCustomCommandException::class],
-                    ]
-                ]
-            ],
-            'models' => [
-                'Foo' => [
+                        ),
+                    ),
+                    'errorResponses' => array(
+                        array('code' => 404, 'class' => '\Hough\Guzzle\Tests\Command\Guzzle\Asset\Exception\CustomCommandException'),
+                        array('code' => 404, 'phrase' => 'Bar', 'class' => '\Hough\Guzzle\Tests\Command\Guzzle\Asset\Exception\OtherCustomCommandException'),
+                    )
+                )
+            ),
+            'models' => array(
+                'Foo' => array(
                     'type' => 'object',
-                    'additionalProperties' => [
+                    'additionalProperties' => array(
                         'location' => 'json'
-                    ]
-                ]
-            ]
-        ]);
+                    )
+                )
+            )
+        ));
 
-        $httpClient = new HttpClient(['handler' => $mock]);
+        $httpClient = new HttpClient(array('handler' => $mock));
         $client = new GuzzleClient($httpClient, $description);
-        $client->foo(['bar' => 'baz']);
+        $client->foo(array('bar' => 'baz'));
     }
 
     /**
-     * @expectedException \GuzzleHttp\Command\Exception\CommandException
+     * @expectedException \Hough\Guzzle\Command\Exception\CommandException
      * @expectedExceptionMessage 404
      */
     public function testDoesNotAddResultWhenExceptionIsPresent()
     {
-        $description = new Description([
-            'operations' => [
-                'foo' => [
+        $description = new Description(array(
+            'operations' => array(
+                'foo' => array(
                     'uri' => 'http://httpbin.org/{foo}',
                     'httpMethod' => 'GET',
                     'responseModel' => 'j',
-                    'parameters' => [
-                        'bar' => [
+                    'parameters' => array(
+                        'bar' => array(
                             'type'     => 'string',
                             'required' => true,
                             'location' => 'uri'
-                        ]
-                    ]
-                ]
-            ],
-            'models' => [
-                'j' => [
+                        )
+                    )
+                )
+            ),
+            'models' => array(
+                'j' => array(
                     'type' => 'object'
-                ]
-            ]
-        ]);
+                )
+            )
+        ));
 
-        $mock = new MockHandler([new Response(404)]);
+        $mock = new MockHandler(array(new Response(404)));
         $stack = HandlerStack::create($mock);
-        $httpClient = new HttpClient(['handler' => $stack]);
+        $httpClient = new HttpClient(array('handler' => $stack));
         $client = new GuzzleClient($httpClient, $description);
-        $client->foo(['bar' => 'baz']);
+        $client->foo(array('bar' => 'baz'));
     }
 
     public function testReturnsExpectedResult()
     {
         $loginResponse = new Response(
             200,
-            [],
+            array(),
             '{
                 "LoginResponse":{
                     "result":{
@@ -311,76 +307,76 @@ class DeserializerTest extends \PHPUnit_Framework_TestCase
                 }
             }'
         );
-        $mock = new MockHandler([$loginResponse]);
+        $mock = new MockHandler(array($loginResponse));
 
-        $description = new Description([
+        $description = new Description(array(
             'name' => 'Test API',
             'baseUri' => 'http://httpbin.org',
-            'operations' => [
-                'Login' => [
+            'operations' => array(
+                'Login' => array(
                     'uri' => '/{foo}',
                     'httpMethod' => 'POST',
                     'responseClass' => 'LoginResponse',
-                    'parameters' => [
-                        'username' => [
+                    'parameters' => array(
+                        'username' => array(
                             'type'     => 'string',
                             'required' => true,
                             'description' => 'Unique user name (alphanumeric)',
                             'location' => 'json'
-                        ],
-                        'password' => [
+                        ),
+                        'password' => array(
                             'type'     => 'string',
                             'required' => true,
                             'description' => 'User\'s password',
                             'location' => 'json'
-                        ],
-                        'response' => [
+                        ),
+                        'response' => array(
                             'type'     => 'string',
                             'required' => false,
                             'description' => 'Determines the response type: xml = result content will be xml formatted (default); plain = result content will be simple text, without structure; json  = result content will be json formatted',
                             'location' => 'json'
-                        ],
-                        'token' => [
+                        ),
+                        'token' => array(
                             'type'     => 'string',
                             'required' => false,
                             'description' => 'Provides the authentication token',
                             'location' => 'json'
-                        ]
-                    ]
-                ]
-            ],
-            'models' => [
-                'LoginResponse' => [
+                        )
+                    )
+                )
+            ),
+            'models' => array(
+                'LoginResponse' => array(
                     'type' => 'object',
-                    'additionalProperties' => [
+                    'additionalProperties' => array(
                         'location' => 'json'
-                    ]
-                ]
-            ]
-        ]);
+                    )
+                )
+            )
+        ));
 
-        $httpClient = new HttpClient(['handler' => $mock]);
+        $httpClient = new HttpClient(array('handler' => $mock));
         $client = new GuzzleClient($httpClient, $description);
-        $result = $client->Login([
+        $result = $client->Login(array(
             'username' => 'test',
             'password' => 'test',
             'response' => 'json',
-        ]);
+        ));
 
-        $expected = [
-            'result' => [
+        $expected = array(
+            'result' => array(
                 'type' => 4,
-                'username' => [
+                'username' => array(
                     'uid' => 38664492,
                     'content' => 'skyfillers-api-test'
-                ],
+                ),
                 'token' => '3FB1F21014D630481D35CBC30CBF4043'
-            ],
-            'status' => [
+            ),
+            'status' => array(
                 'code' => 200,
                 'content' => 'OK'
-            ]
-        ];
+            )
+        );
         $this->assertArraySubset($expected, $result['LoginResponse']);
     }
 }

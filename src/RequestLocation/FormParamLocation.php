@@ -1,10 +1,10 @@
 <?php
-namespace GuzzleHttp\Command\Guzzle\RequestLocation;
+namespace Hough\Guzzle\Command\Guzzle\RequestLocation;
 
-use GuzzleHttp\Command\CommandInterface;
-use GuzzleHttp\Command\Guzzle\Operation;
-use GuzzleHttp\Command\Guzzle\Parameter;
-use GuzzleHttp\Psr7;
+use Hough\Guzzle\Command\CommandInterface;
+use Hough\Guzzle\Command\Guzzle\Operation;
+use Hough\Guzzle\Command\Guzzle\Parameter;
+use Hough\Psr7;
 use Psr\Http\Message\RequestInterface;
 
 /**
@@ -16,7 +16,7 @@ class FormParamLocation extends AbstractLocation
     protected $contentType = 'application/x-www-form-urlencoded; charset=utf-8';
 
     /** @var array $formParamsData */
-    protected $formParamsData = [];
+    protected $formParamsData = array();
 
     /**
      * Set the name of the location
@@ -61,8 +61,8 @@ class FormParamLocation extends AbstractLocation
         Operation $operation
     ) {
         $data = $this->formParamsData;
-        $this->formParamsData = [];
-        $modify = [];
+        $this->formParamsData = array();
+        $modify = array();
 
         // Add additional parameters to the form_params array
         $additional = $operation->getAdditionalParameters();

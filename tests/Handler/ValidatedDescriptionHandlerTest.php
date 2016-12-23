@@ -1,89 +1,89 @@
 <?php
-namespace GuzzleHttp\Tests\Command\Guzzle\Handler;
+namespace Hough\Guzzle\Tests\Command\Guzzle\Handler;
 
-use GuzzleHttp\Client as HttpClient;
-use GuzzleHttp\Command\Guzzle\Description;
-use GuzzleHttp\Command\Guzzle\GuzzleClient;
+use Hough\Guzzle\Client as HttpClient;
+use Hough\Guzzle\Command\Guzzle\Description;
+use Hough\Guzzle\Command\Guzzle\GuzzleClient;
 
 /**
- * @covers \GuzzleHttp\Command\Guzzle\Handler\ValidatedDescriptionHandler
+ * @covers \Hough\Guzzle\Command\Guzzle\Handler\ValidatedDescriptionHandler
  */
 class ValidatedDescriptionHandlerTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
-     * @expectedException \GuzzleHttp\Command\Exception\CommandException
+     * @expectedException \Hough\Guzzle\Command\Exception\CommandException
      * @expectedExceptionMessage Validation errors: [bar] is a required string
      */
     public function testValidates()
     {
-        $description = new Description([
-            'operations' => [
-                'foo' => [
+        $description = new Description(array(
+            'operations' => array(
+                'foo' => array(
                     'uri' => 'http://httpbin.org',
                     'httpMethod' => 'GET',
                     'responseModel' => 'j',
-                    'parameters' => [
-                        'bar' => [
+                    'parameters' => array(
+                        'bar' => array(
                             'type'     => 'string',
                             'required' => true
-                        ]
-                    ]
-                ]
-            ]
-        ]);
+                        )
+                    )
+                )
+            )
+        ));
 
         $client = new GuzzleClient(new HttpClient(), $description);
-        $client->foo([]);
+        $client->foo(array());
     }
 
     public function testSuccessfulValidationDoesNotThrow()
     {
-        $description = new Description([
-            'operations' => [
-                'foo' => [
+        $description = new Description(array(
+            'operations' => array(
+                'foo' => array(
                     'uri' => 'http://httpbin.org',
                     'httpMethod' => 'GET',
                     'responseModel' => 'j',
-                    'parameters' => []
-                ]
-            ],
-            'models' => [
-                'j' => [
+                    'parameters' => array()
+                )
+            ),
+            'models' => array(
+                'j' => array(
                     'type' => 'object'
-                ]
-            ]
-        ]);
+                )
+            )
+        ));
 
         $client = new GuzzleClient(new HttpClient(), $description);
-        $client->foo([]);
+        $client->foo(array());
     }
 
     /**
-     * @expectedException \GuzzleHttp\Command\Exception\CommandException
+     * @expectedException \Hough\Guzzle\Command\Exception\CommandException
      * @expectedExceptionMessage Validation errors: [bar] must be of type string
      */
     public function testValidatesAdditionalParameters()
     {
-        $description = new Description([
-            'operations' => [
-                'foo' => [
+        $description = new Description(array(
+            'operations' => array(
+                'foo' => array(
                     'uri' => 'http://httpbin.org',
                     'httpMethod' => 'GET',
                     'responseModel' => 'j',
-                    'additionalParameters' => [
+                    'additionalParameters' => array(
                         'type'     => 'string'
-                    ]
-                ]
-            ],
-            'models' => [
-                'j' => [
+                    )
+                )
+            ),
+            'models' => array(
+                'j' => array(
                     'type' => 'object'
-                ]
-            ]
-        ]);
+                )
+            )
+        ));
 
         $client = new GuzzleClient(new HttpClient(), $description);
-        $client->foo(['bar' => new \stdClass()]);
+        $client->foo(array('bar' => new \stdClass()));
     }
 }

@@ -1,17 +1,17 @@
 <?php
-namespace GuzzleHttp\Command\Guzzle;
+namespace Hough\Guzzle\Command\Guzzle;
 
-use GuzzleHttp\Command\CommandInterface;
-use GuzzleHttp\Command\Guzzle\RequestLocation\BodyLocation;
-use GuzzleHttp\Command\Guzzle\RequestLocation\FormParamLocation;
-use GuzzleHttp\Command\Guzzle\RequestLocation\HeaderLocation;
-use GuzzleHttp\Command\Guzzle\RequestLocation\JsonLocation;
-use GuzzleHttp\Command\Guzzle\RequestLocation\MultiPartLocation;
-use GuzzleHttp\Command\Guzzle\RequestLocation\QueryLocation;
-use GuzzleHttp\Command\Guzzle\RequestLocation\RequestLocationInterface;
-use GuzzleHttp\Command\Guzzle\RequestLocation\XmlLocation;
-use GuzzleHttp\Psr7\Request;
-use GuzzleHttp\Psr7\Uri;
+use Hough\Guzzle\Command\CommandInterface;
+use Hough\Guzzle\Command\Guzzle\RequestLocation\BodyLocation;
+use Hough\Guzzle\Command\Guzzle\RequestLocation\FormParamLocation;
+use Hough\Guzzle\Command\Guzzle\RequestLocation\HeaderLocation;
+use Hough\Guzzle\Command\Guzzle\RequestLocation\JsonLocation;
+use Hough\Guzzle\Command\Guzzle\RequestLocation\MultiPartLocation;
+use Hough\Guzzle\Command\Guzzle\RequestLocation\QueryLocation;
+use Hough\Guzzle\Command\Guzzle\RequestLocation\RequestLocationInterface;
+use Hough\Guzzle\Command\Guzzle\RequestLocation\XmlLocation;
+use Hough\Psr7\Request;
+use Hough\Psr7\Uri;
 use Psr\Http\Message\RequestInterface;
 
 /**
@@ -31,11 +31,11 @@ class Serializer
      */
     public function __construct(
         DescriptionInterface $description,
-        array $requestLocations = []
+        array $requestLocations = array()
     ) {
         static $defaultRequestLocations;
         if (!$defaultRequestLocations) {
-            $defaultRequestLocations = [
+            $defaultRequestLocations = array(
                 'body'      => new BodyLocation(),
                 'query'     => new QueryLocation(),
                 'header'    => new HeaderLocation(),
@@ -43,7 +43,7 @@ class Serializer
                 'xml'       => new XmlLocation(),
                 'formParam' => new FormParamLocation(),
                 'multipart' => new MultiPartLocation(),
-            ];
+            );
         }
 
         $this->locations = $requestLocations + $defaultRequestLocations;
@@ -72,7 +72,7 @@ class Serializer
         CommandInterface $command,
         RequestInterface $request
     ) {
-        $visitedLocations = [];
+        $visitedLocations = array();
         $operation = $this->description->getOperation($command->getName());
 
         // Visit each actual parameter
@@ -130,17 +130,17 @@ class Serializer
     /**
      * Create a request for an operation with a uri merged onto a base URI
      *
-     * @param \GuzzleHttp\Command\Guzzle\Operation $operation
-     * @param \GuzzleHttp\Command\CommandInterface $command
+     * @param \Hough\Guzzle\Command\Guzzle\Operation $operation
+     * @param \Hough\Guzzle\Command\CommandInterface $command
      *
-     * @return \GuzzleHttp\Psr7\Request
+     * @return \Hough\Psr7\Request
      */
     private function createCommandWithUri(
         Operation $operation,
         CommandInterface $command
     ) {
         // Get the path values and use the client config settings
-        $variables = [];
+        $variables = array();
         foreach ($operation->getParams() as $name => $arg) {
             /* @var Parameter $arg */
             if ($arg->getLocation() == 'uri') {
@@ -154,7 +154,7 @@ class Serializer
         }
 
         // Expand the URI template.
-        $uri = \GuzzleHttp\uri_template($operation->getUri(), $variables);
+        $uri = \Hough\Guzzle\uri_template($operation->getUri(), $variables);
 
         return new Request(
             $operation->getHttpMethod(),

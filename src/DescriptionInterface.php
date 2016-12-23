@@ -1,7 +1,7 @@
 <?php
-namespace GuzzleHttp\Command\Guzzle;
+namespace Hough\Guzzle\Command\Guzzle;
 
-use GuzzleHttp\Psr7\Uri;
+use Hough\Psr7\Uri;
 
 interface DescriptionInterface
 {

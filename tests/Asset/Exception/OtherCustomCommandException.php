@@ -1,12 +1,12 @@
 <?php
-namespace GuzzleHttp\Tests\Command\Guzzle\Asset\Exception;
+namespace Hough\Guzzle\Tests\Command\Guzzle\Asset\Exception;
 
-use GuzzleHttp\Command\Exception\CommandException;
+use \Hough\Guzzle\Command\Exception\CommandException;
 
 /**
  * Class OtherCustomCommandException
  *
- * @package GuzzleHttp\Tests\Command\Guzzle\Asset\Exception
+ * @package Hough\Guzzle\Tests\Command\Guzzle\Asset\Exception
  */
 class OtherCustomCommandException extends CommandException
 {

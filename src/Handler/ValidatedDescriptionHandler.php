@@ -1,9 +1,9 @@
-<?php namespace GuzzleHttp\Command\Guzzle\Handler;
+<?php namespace Hough\Guzzle\Command\Guzzle\Handler;
 
-use GuzzleHttp\Command\CommandInterface;
-use GuzzleHttp\Command\Exception\CommandException;
-use GuzzleHttp\Command\Guzzle\DescriptionInterface;
-use GuzzleHttp\Command\Guzzle\SchemaValidator;
+use Hough\Guzzle\Command\CommandInterface;
+use Hough\Guzzle\Command\Exception\CommandException;
+use Hough\Guzzle\Command\Guzzle\DescriptionInterface;
+use Hough\Guzzle\Command\Guzzle\SchemaValidator;
 
 /**
  * Handler used to validate command input against a service description.
@@ -37,7 +37,7 @@ class ValidatedDescriptionHandler
     public function __invoke(callable $handler)
     {
         return function (CommandInterface $command) use ($handler) {
-            $errors = [];
+            $errors = array();
             $operation = $this->description->getOperation($command->getName());
 
             foreach ($operation->getParams() as $name => $schema) {

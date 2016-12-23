@@ -1,36 +1,36 @@
 <?php
-namespace GuzzleHttp\Tests\Command\Guzzle;
+namespace Hough\Guzzle\Tests\Command\Guzzle;
 
-use GuzzleHttp\Command\Command;
-use GuzzleHttp\Command\Guzzle\Description;
-use GuzzleHttp\Command\Guzzle\Serializer;
-use GuzzleHttp\Psr7\Request;
+use Hough\Guzzle\Command\Command;
+use Hough\Guzzle\Command\Guzzle\Description;
+use Hough\Guzzle\Command\Guzzle\Serializer;
+use Hough\Psr7\Request;
 
 /**
- * @covers \GuzzleHttp\Command\Guzzle\Serializer
+ * @covers \Hough\Guzzle\Command\Guzzle\Serializer
  */
 class SerializerTest extends \PHPUnit_Framework_TestCase
 {
     public function testAllowsUriTemplates()
     {
-        $description = new Description([
+        $description = new Description(array(
             'baseUri' => 'http://test.com',
-            'operations' => [
-                'test' => [
+            'operations' => array(
+                'test' => array(
                     'httpMethod'         => 'GET',
                     'uri'                => '/api/{key}/foo',
-                    'parameters'         => [
-                        'key' => [
+                    'parameters'         => array(
+                        'key' => array(
                             'required'  => true,
                             'type'      => 'string',
                             'location'  => 'uri'
-                        ],
-                    ]
-                ]
-            ]
-        ]);
+                        ),
+                    )
+                )
+            )
+        ));
 
-        $command = new Command('test', ['key' => 'bar']);
+        $command = new Command('test', array('key' => 'bar'));
         $serializer = new Serializer($description);
         /** @var Request $request */
         $request = $serializer($command);

@@ -1,9 +1,9 @@
 <?php
-namespace GuzzleHttp\Command\Guzzle\RequestLocation;
+namespace Hough\Guzzle\Command\Guzzle\RequestLocation;
 
-use GuzzleHttp\Command\CommandInterface;
-use GuzzleHttp\Command\Guzzle\Operation;
-use GuzzleHttp\Command\Guzzle\Parameter;
+use Hough\Guzzle\Command\CommandInterface;
+use Hough\Guzzle\Command\Guzzle\Operation;
+use Hough\Guzzle\Command\Guzzle\Parameter;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
 

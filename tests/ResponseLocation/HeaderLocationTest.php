@@ -1,14 +1,14 @@
 <?php
-namespace GuzzleHttp\Tests\Command\Guzzle\ResponseLocation;
+namespace Hough\Guzzle\Tests\Command\Guzzle\ResponseLocation;
 
-use GuzzleHttp\Command\Guzzle\Parameter;
-use GuzzleHttp\Command\Guzzle\ResponseLocation\HeaderLocation;
-use GuzzleHttp\Command\Result;
-use GuzzleHttp\Psr7\Response;
+use Hough\Guzzle\Command\Guzzle\Parameter;
+use Hough\Guzzle\Command\Guzzle\ResponseLocation\HeaderLocation;
+use Hough\Guzzle\Command\Result;
+use Hough\Psr7\Response;
 
 /**
- * @covers \GuzzleHttp\Command\Guzzle\ResponseLocation\HeaderLocation
- * @covers \GuzzleHttp\Command\Guzzle\ResponseLocation\AbstractLocation
+ * @covers \Hough\Guzzle\Command\Guzzle\ResponseLocation\HeaderLocation
+ * @covers \Hough\Guzzle\Command\Guzzle\ResponseLocation\AbstractLocation
  */
 class HeaderLocationTest extends \PHPUnit_Framework_TestCase
 {
@@ -18,12 +18,12 @@ class HeaderLocationTest extends \PHPUnit_Framework_TestCase
     public function testVisitsLocation()
     {
         $location = new HeaderLocation();
-        $parameter = new Parameter([
+        $parameter = new Parameter(array(
             'name'    => 'val',
             'sentAs'  => 'X-Foo',
-            'filters' => ['strtoupper']
-        ]);
-        $response = new Response(200, ['X-Foo' => 'bar']);
+            'filters' => array('strtoupper')
+        ));
+        $response = new Response(200, array('X-Foo' => 'bar'));
         $result = new Result();
         $result = $location->visit($result, $response, $parameter);
         $this->assertEquals('BAR', $result['val']);

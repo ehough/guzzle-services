@@ -1,7 +1,7 @@
 <?php
-namespace GuzzleHttp\Command\Guzzle;
+namespace Hough\Guzzle\Command\Guzzle;
 
-use GuzzleHttp\Command\ToArrayInterface;
+use Hough\Guzzle\Command\ToArrayInterface;
 
 /**
  * API parameter object used with service descriptions
@@ -65,7 +65,7 @@ class Parameter implements ToArrayInterface
     private $data;
 
     /** @var array $properties */
-    private $properties = [];
+    private $properties = array();
 
     /** @var array|bool|Parameter $additionalProperties */
     private $additionalProperties;
@@ -175,7 +175,7 @@ class Parameter implements ToArrayInterface
      *
      * @throws \InvalidArgumentException
      */
-    public function __construct(array $data = [], array $options = [])
+    public function __construct(array $data = array(), array $options = array())
     {
         $this->originalData = $data;
 
@@ -487,7 +487,7 @@ class Parameter implements ToArrayInterface
      */
     public function getFilters()
     {
-        return $this->filters ?: [];
+        return $this->filters ?: array();
     }
 
     /**
@@ -498,7 +498,7 @@ class Parameter implements ToArrayInterface
     public function getProperties()
     {
         if (!$this->propertiesCache) {
-            $this->propertiesCache = [];
+            $this->propertiesCache = array();
             foreach (array_keys($this->properties) as $name) {
                 $this->propertiesCache[$name] = $this->getProperty($name);
             }
@@ -524,7 +524,7 @@ class Parameter implements ToArrayInterface
             $this->properties[$name]['name'] = $name;
             $this->properties[$name] = new static(
                 $this->properties[$name],
-                ['description' => $this->serviceDescription]
+                array('description' => $this->serviceDescription)
             );
         }
 
@@ -541,7 +541,7 @@ class Parameter implements ToArrayInterface
         if (is_array($this->additionalProperties)) {
             $this->additionalProperties = new static(
                 $this->additionalProperties,
-                ['description' => $this->serviceDescription]
+                array('description' => $this->serviceDescription)
             );
         }
 
@@ -558,7 +558,7 @@ class Parameter implements ToArrayInterface
         if (is_array($this->items)) {
             $this->items = new static(
                 $this->items,
-                ['description' => $this->serviceDescription]
+                array('description' => $this->serviceDescription)
             );
         }
 
@@ -604,7 +604,7 @@ class Parameter implements ToArrayInterface
      */
     private function setFilters(array $filters)
     {
-        $this->filters = [];
+        $this->filters = array();
         foreach ($filters as $filter) {
             $this->addFilter($filter);
         }
@@ -631,7 +631,7 @@ class Parameter implements ToArrayInterface
         }
 
         if (!$this->filters) {
-            $this->filters = [$filter];
+            $this->filters = array($filter);
         } else {
             $this->filters[] = $filter;
         }

@@ -1,10 +1,10 @@
 <?php
-namespace GuzzleHttp\Command\Guzzle\RequestLocation;
+namespace Hough\Guzzle\Command\Guzzle\RequestLocation;
 
-use GuzzleHttp\Command\CommandInterface;
-use GuzzleHttp\Command\Guzzle\Operation;
-use GuzzleHttp\Command\Guzzle\Parameter;
-use GuzzleHttp\Psr7;
+use Hough\Guzzle\Command\CommandInterface;
+use Hough\Guzzle\Command\Guzzle\Operation;
+use Hough\Guzzle\Command\Guzzle\Parameter;
+use Hough\Psr7;
 use Psr\Http\Message\RequestInterface;
 
 /**
@@ -19,7 +19,7 @@ class XmlLocation extends AbstractLocation
     private $contentType;
 
     /** @var Parameter[] Buffered elements to write */
-    private $buffered = [];
+    private $buffered = array();
 
     /**
      * @param string $locationName Name of the location
@@ -77,7 +77,7 @@ class XmlLocation extends AbstractLocation
             );
         }
 
-        $this->buffered = [];
+        $this->buffered = array();
 
         $additional = $operation->getAdditionalParameters();
         if ($additional && $additional->getLocation() == $this->locationName) {
@@ -122,7 +122,7 @@ class XmlLocation extends AbstractLocation
      */
     protected function createRootElement(Operation $operation)
     {
-        static $defaultRoot = ['name' => 'Request'];
+        static $defaultRoot = array('name' => 'Request');
         // If no root element was specified, then just wrap the XML in 'Request'
         $root = $operation->getData('xmlRoot') ?: $defaultRoot;
         // Allow the XML declaration to be customized with xmlEncoding
@@ -290,7 +290,7 @@ class XmlLocation extends AbstractLocation
      */
     protected function addXmlObject(\XMLWriter $writer, Parameter $param, &$value)
     {
-        $noAttributes = [];
+        $noAttributes = array();
 
         // add values which have attributes
         foreach ($value as $name => $v) {
@@ -298,7 +298,7 @@ class XmlLocation extends AbstractLocation
                 if ($property->getData('xmlAttribute')) {
                     $this->addXml($writer, $property, $v);
                 } else {
-                    $noAttributes[] = ['value' => $v, 'property' => $property];
+                    $noAttributes[] = array('value' => $v, 'property' => $property);
                 }
             }
         }

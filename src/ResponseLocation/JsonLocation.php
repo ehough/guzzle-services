@@ -1,9 +1,9 @@
 <?php
-namespace GuzzleHttp\Command\Guzzle\ResponseLocation;
+namespace Hough\Guzzle\Command\Guzzle\ResponseLocation;
 
-use GuzzleHttp\Command\Guzzle\Parameter;
-use GuzzleHttp\Command\Result;
-use GuzzleHttp\Command\ResultInterface;
+use Hough\Guzzle\Command\Guzzle\Parameter;
+use Hough\Guzzle\Command\Result;
+use Hough\Guzzle\Command\ResultInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -12,7 +12,7 @@ use Psr\Http\Message\ResponseInterface;
 class JsonLocation extends AbstractLocation
 {
     /** @var array The JSON document being visited */
-    private $json = [];
+    private $json = array();
 
     /**
      * Set the name of the location
@@ -25,11 +25,11 @@ class JsonLocation extends AbstractLocation
     }
 
     /**
-     * @param \GuzzleHttp\Command\ResultInterface  $result
+     * @param \Hough\Guzzle\Command\ResultInterface  $result
      * @param \Psr\Http\Message\ResponseInterface  $response
-     * @param \GuzzleHttp\Command\Guzzle\Parameter $model
+     * @param \Hough\Guzzle\Command\Guzzle\Parameter $model
      *
-     * @return \GuzzleHttp\Command\ResultInterface
+     * @return \Hough\Guzzle\Command\ResultInterface
      */
     public function before(
         ResultInterface $result,
@@ -38,11 +38,11 @@ class JsonLocation extends AbstractLocation
     ) {
         $body = (string) $response->getBody();
         $body = $body ?: "{}";
-        $this->json = \GuzzleHttp\json_decode($body, true);
+        $this->json = \Hough\Guzzle\json_decode($body, true);
         // relocate named arrays, so that they have the same structure as
         //  arrays nested in objects and visit can work on them in the same way
         if ($model->getType() === 'array' && ($name = $model->getName())) {
-            $this->json = [$name => $this->json];
+            $this->json = array($name => $this->json);
         }
 
         return $result;
@@ -78,7 +78,7 @@ class JsonLocation extends AbstractLocation
             }
         }
 
-        $this->json = [];
+        $this->json = array();
 
         return $result;
     }
@@ -131,7 +131,7 @@ class JsonLocation extends AbstractLocation
             return $param->filter($value);
         }
 
-        $result = [];
+        $result = array();
         $type = $param->getType();
 
         if ($type == 'array') {

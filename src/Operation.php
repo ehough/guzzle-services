@@ -1,7 +1,7 @@
 <?php
-namespace GuzzleHttp\Command\Guzzle;
+namespace Hough\Guzzle\Command\Guzzle;
 
-use GuzzleHttp\Command\ToArrayInterface;
+use Hough\Guzzle\Command\ToArrayInterface;
 
 /**
  * Guzzle operation
@@ -9,7 +9,7 @@ use GuzzleHttp\Command\ToArrayInterface;
 class Operation implements ToArrayInterface
 {
     /** @var array Parameters */
-    private $parameters = [];
+    private $parameters = array();
 
     /** @var Parameter Additional parameters schema */
     private $additionalParameters;
@@ -49,9 +49,9 @@ class Operation implements ToArrayInterface
      * @param DescriptionInterface  $description Service description used to resolve models if $ref tags are found
      * @throws \InvalidArgumentException
      */
-    public function __construct(array $config = [], DescriptionInterface $description = null)
+    public function __construct(array $config = array(), DescriptionInterface $description = null)
     {
-        static $defaults = [
+        static $defaults = array(
             'name' => '',
             'httpMethod' => '',
             'uri' => '',
@@ -60,13 +60,13 @@ class Operation implements ToArrayInterface
             'summary' => '',
             'documentationUrl' => null,
             'deprecated' => false,
-            'data' => [],
-            'parameters' => [],
+            'data' => array(),
+            'parameters' => array(),
             'additionalParameters' => null,
-            'errorResponses' => []
-        ];
+            'errorResponses' => array()
+        );
 
-        $this->description = $description === null ? new Description([]) : $description;
+        $this->description = $description === null ? new Description(array()) : $description;
 
         if (isset($config['extends'])) {
             $config = $this->resolveExtends($config['extends'], $config);
@@ -294,7 +294,7 @@ class Operation implements ToArrayInterface
             $param['name'] = $name;
             $this->parameters[$name] = new Parameter(
                 $param,
-                ['description' => $this->description]
+                array('description' => $this->description)
             );
         }
 
@@ -302,7 +302,7 @@ class Operation implements ToArrayInterface
             if (is_array($this->config['additionalParameters'])) {
                 $this->additionalParameters = new Parameter(
                     $this->config['additionalParameters'],
-                    ['description' => $this->description]
+                    array('description' => $this->description)
                 );
             } else {
                 $this->additionalParameters = $this->config['additionalParameters'];

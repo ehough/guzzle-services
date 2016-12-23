@@ -1,14 +1,14 @@
 <?php
-namespace GuzzleHttp\Tests\Command\Guzzle\ResponseLocation;
+namespace Hough\Guzzle\Tests\Command\Guzzle\ResponseLocation;
 
-use GuzzleHttp\Command\Guzzle\Parameter;
-use GuzzleHttp\Command\Guzzle\ResponseLocation\ReasonPhraseLocation;
-use GuzzleHttp\Command\Result;
-use GuzzleHttp\Psr7\Response;
+use Hough\Guzzle\Command\Guzzle\Parameter;
+use Hough\Guzzle\Command\Guzzle\ResponseLocation\ReasonPhraseLocation;
+use Hough\Guzzle\Command\Result;
+use Hough\Psr7\Response;
 
 /**
- * @covers \GuzzleHttp\Command\Guzzle\ResponseLocation\ReasonPhraseLocation
- * @covers \GuzzleHttp\Command\Guzzle\ResponseLocation\AbstractLocation
+ * @covers \Hough\Guzzle\Command\Guzzle\ResponseLocation\ReasonPhraseLocation
+ * @covers \Hough\Guzzle\Command\Guzzle\ResponseLocation\AbstractLocation
  */
 class ReasonPhraseLocationTest extends \PHPUnit_Framework_TestCase
 {
@@ -18,10 +18,10 @@ class ReasonPhraseLocationTest extends \PHPUnit_Framework_TestCase
     public function testVisitsLocation()
     {
         $location = new ReasonPhraseLocation();
-        $parameter = new Parameter([
+        $parameter = new Parameter(array(
             'name' => 'val',
-            'filters' => ['strtolower']
-        ]);
+            'filters' => array('strtolower')
+        ));
         $response = new Response(200);
         $result = new Result();
         $result = $location->visit($result, $response, $parameter);

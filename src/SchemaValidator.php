@@ -1,7 +1,7 @@
 <?php
-namespace GuzzleHttp\Command\Guzzle;
+namespace Hough\Guzzle\Command\Guzzle;
 
-use GuzzleHttp\Command\ToArrayInterface;
+use Hough\Guzzle\Command\ToArrayInterface;
 
 /**
  * Default parameter validator
@@ -36,7 +36,7 @@ class SchemaValidator
      */
     public function validate(Parameter $param, &$value)
     {
-        $this->errors = [];
+        $this->errors = array();
         $this->recursiveProcess($param, $value);
 
         if (empty($this->errors)) {
@@ -54,7 +54,7 @@ class SchemaValidator
      */
     public function getErrors()
     {
-        return $this->errors ?: [];
+        return $this->errors ?: array();
     }
 
     /**
@@ -152,7 +152,7 @@ class SchemaValidator
             } elseif ($value === null) {
                 // Attempt to let the contents be built up by default values if
                 // possible
-                $value = [];
+                $value = array();
                 $temporaryValue = $valueIsArray = $traverse = true;
             }
 

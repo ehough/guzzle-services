@@ -1,16 +1,16 @@
 <?php
-namespace GuzzleHttp\Command\Guzzle;
+namespace Hough\Guzzle\Command\Guzzle;
 
-use GuzzleHttp\Command\CommandInterface;
-use GuzzleHttp\Command\Guzzle\ResponseLocation\BodyLocation;
-use GuzzleHttp\Command\Guzzle\ResponseLocation\HeaderLocation;
-use GuzzleHttp\Command\Guzzle\ResponseLocation\JsonLocation;
-use GuzzleHttp\Command\Guzzle\ResponseLocation\ReasonPhraseLocation;
-use GuzzleHttp\Command\Guzzle\ResponseLocation\ResponseLocationInterface;
-use GuzzleHttp\Command\Guzzle\ResponseLocation\StatusCodeLocation;
-use GuzzleHttp\Command\Guzzle\ResponseLocation\XmlLocation;
-use GuzzleHttp\Command\Result;
-use GuzzleHttp\Command\ResultInterface;
+use Hough\Guzzle\Command\CommandInterface;
+use Hough\Guzzle\Command\Guzzle\ResponseLocation\BodyLocation;
+use Hough\Guzzle\Command\Guzzle\ResponseLocation\HeaderLocation;
+use Hough\Guzzle\Command\Guzzle\ResponseLocation\JsonLocation;
+use Hough\Guzzle\Command\Guzzle\ResponseLocation\ReasonPhraseLocation;
+use Hough\Guzzle\Command\Guzzle\ResponseLocation\ResponseLocationInterface;
+use Hough\Guzzle\Command\Guzzle\ResponseLocation\StatusCodeLocation;
+use Hough\Guzzle\Command\Guzzle\ResponseLocation\XmlLocation;
+use Hough\Guzzle\Command\Result;
+use Hough\Guzzle\Command\ResultInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -46,18 +46,18 @@ class Deserializer
     public function __construct(
         DescriptionInterface $description,
         $process,
-        array $responseLocations = []
+        array $responseLocations = array()
     ) {
         static $defaultResponseLocations;
         if (!$defaultResponseLocations) {
-            $defaultResponseLocations = [
+            $defaultResponseLocations = array(
                 'body'         => new BodyLocation(),
                 'header'       => new HeaderLocation(),
                 'reasonPhrase' => new ReasonPhraseLocation(),
                 'statusCode'   => new StatusCodeLocation(),
                 'xml'          => new XmlLocation(),
                 'json'         => new JsonLocation(),
-            ];
+            );
         }
 
         $this->responseLocations = $responseLocations + $defaultResponseLocations;
@@ -110,7 +110,7 @@ class Deserializer
     protected function visit(Parameter $model, ResponseInterface $response)
     {
         $result = new Result();
-        $context = ['visitors' => []];
+        $context = array('visitors' => array());
 
         if ($model->getType() === 'object') {
             $result = $this->visitOuterObject($model, $result, $response, $context);
@@ -189,11 +189,11 @@ class Deserializer
         // Use 'location' from all individual defined properties, but fall back
         // to the model location if no per-property location is set. Collect
         // the properties that need to be visited into an array.
-        $visitProperties = [];
+        $visitProperties = array();
         foreach ($model->getProperties() as $schema) {
             $location = $schema->getLocation() ?: $parentLocation;
             if ($location) {
-                $visitProperties[] = [$location, $schema];
+                $visitProperties[] = array($location, $schema);
                 // Trigger the before method on each unique visitor location
                 if (!isset($context['visitors'][$location])) {
                     $result = $this->triggerBeforeVisitor($location, $model, $result, $response, $context);
@@ -244,7 +244,7 @@ class Deserializer
      * Reads the "errorResponses" from commands, and trigger appropriate exceptions
      *
      * In order for the exception to be properly triggered, all your exceptions must be instance
-     * of "GuzzleHttp\Command\Exception\CommandException". If that's not the case, your exceptions will be wrapped
+     * of "Hough\Guzzle\Command\Exception\CommandException". If that's not the case, your exceptions will be wrapped
      * around a CommandException
      *
      * @param ResponseInterface $response

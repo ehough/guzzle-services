@@ -1,13 +1,13 @@
 <?php
-namespace GuzzleHttp\Tests\Command\Guzzle;
+namespace Hough\Guzzle\Tests\Command\Guzzle;
 
-use GuzzleHttp\Command\Guzzle\Description;
-use GuzzleHttp\Command\Guzzle\Operation;
-use GuzzleHttp\Command\Guzzle\Parameter;
-use GuzzleHttp\Command\Guzzle\SchemaFormatter;
+use Hough\Guzzle\Command\Guzzle\Description;
+use Hough\Guzzle\Command\Guzzle\Operation;
+use Hough\Guzzle\Command\Guzzle\Parameter;
+use Hough\Guzzle\Command\Guzzle\SchemaFormatter;
 
 /**
- * @covers \GuzzleHttp\Command\Guzzle\Description
+ * @covers \Hough\Guzzle\Command\Guzzle\Description
  */
 class DescriptionTest extends \PHPUnit_Framework_TestCase
 {
@@ -15,23 +15,23 @@ class DescriptionTest extends \PHPUnit_Framework_TestCase
 
     public function setup()
     {
-        $this->operations = [
-            'test_command' => [
+        $this->operations = array(
+            'test_command' => array(
                 'name'        => 'test_command',
                 'description' => 'documentationForCommand',
                 'httpMethod'  => 'DELETE',
                 'class'       => 'FooModel',
-                'parameters'  => [
-                    'bucket'  => ['required' => true],
-                    'key'     => ['required' => true]
-                ]
-            ]
-        ];
+                'parameters'  => array(
+                    'bucket'  => array('required' => true),
+                    'key'     => array('required' => true)
+                )
+            )
+        );
     }
 
     public function testConstructor()
     {
-        $service = new Description(['operations' => $this->operations]);
+        $service = new Description(array('operations' => $this->operations));
         $this->assertEquals(1, count($service->getOperations()));
         $this->assertFalse($service->hasOperation('foobar'));
         $this->assertTrue($service->hasOperation('test_command'));
@@ -39,28 +39,28 @@ class DescriptionTest extends \PHPUnit_Framework_TestCase
 
     public function testContainsModels()
     {
-        $d = new Description([
-            'operations' => ['foo' => []],
-            'models' => [
-                'Tag'    => ['type' => 'object'],
-                'Person' => ['type' => 'object']
-            ]
-        ]);
+        $d = new Description(array(
+            'operations' => array('foo' => array()),
+            'models' => array(
+                'Tag'    => array('type' => 'object'),
+                'Person' => array('type' => 'object')
+            )
+        ));
         $this->assertTrue($d->hasModel('Tag'));
         $this->assertTrue($d->hasModel('Person'));
         $this->assertFalse($d->hasModel('Foo'));
-        $this->assertInstanceOf(Parameter::class, $d->getModel('Tag'));
-        $this->assertEquals(['Tag', 'Person'], array_keys($d->getModels()));
+        $this->assertInstanceOf('\Hough\Guzzle\Command\Guzzle\Parameter', $d->getModel('Tag'));
+        $this->assertEquals(array('Tag', 'Person'), array_keys($d->getModels()));
     }
 
     public function testCanUseResponseClass()
     {
-        $d = new Description([
-            'operations' => [
-                'foo' => ['responseClass' => 'Tag']
-            ],
-            'models' => ['Tag' => ['type' => 'object']]
-        ]);
+        $d = new Description(array(
+            'operations' => array(
+                'foo' => array('responseClass' => 'Tag')
+            ),
+            'models' => array('Tag' => array('type' => 'object'))
+        ));
         $op = $d->getOperation('foo');
         $this->assertNotNull($op->getResponseModel());
     }
@@ -70,18 +70,18 @@ class DescriptionTest extends \PHPUnit_Framework_TestCase
      */
     public function testRetrievingMissingModelThrowsException()
     {
-        $d = new Description([]);
+        $d = new Description(array());
         $d->getModel('foo');
     }
 
     public function testHasAttributes()
     {
-        $d = new Description([
-            'operations'  => [],
+        $d = new Description(array(
+            'operations'  => array(),
             'name'        => 'Name',
             'description' => 'Description',
             'apiVersion'  => '1.24'
-        ]);
+        ));
 
         $this->assertEquals('Name', $d->getName());
         $this->assertEquals('Description', $d->getDescription());
@@ -90,18 +90,18 @@ class DescriptionTest extends \PHPUnit_Framework_TestCase
 
     public function testPersistsCustomAttributes()
     {
-        $data = [
-            'operations'  => ['foo' => ['class' => 'foo', 'parameters' => []]],
+        $data = array(
+            'operations'  => array('foo' => array('class' => 'foo', 'parameters' => array())),
             'name'        => 'Name',
             'description' => 'Test',
             'apiVersion'  => '1.24',
             'auth'        => 'foo',
             'keyParam'    => 'bar'
-        ];
+        );
         $d = new Description($data);
         $this->assertEquals('foo', $d->getData('auth'));
         $this->assertEquals('bar', $d->getData('keyParam'));
-        $this->assertEquals(['auth' => 'foo', 'keyParam' => 'bar'], $d->getData());
+        $this->assertEquals(array('auth' => 'foo', 'keyParam' => 'bar'), $d->getData());
         $this->assertNull($d->getData('missing'));
     }
 
@@ -110,7 +110,7 @@ class DescriptionTest extends \PHPUnit_Framework_TestCase
      */
     public function testThrowsExceptionForMissingOperation()
     {
-        $s = new Description([]);
+        $s = new Description(array());
         $this->assertNull($s->getOperation('foo'));
     }
 
@@ -119,36 +119,36 @@ class DescriptionTest extends \PHPUnit_Framework_TestCase
      */
     public function testValidatesOperationTypes()
     {
-        new Description([
-            'operations' => ['foo' => new \stdClass()]
-        ]);
+        new Description(array(
+            'operations' => array('foo' => new \stdClass())
+        ));
     }
 
     public function testHasbaseUrl()
     {
-        $description = new Description(['baseUrl' => 'http://foo.com']);
+        $description = new Description(array('baseUrl' => 'http://foo.com'));
         $this->assertEquals('http://foo.com', $description->getBaseUri());
     }
 
     public function testHasbaseUri()
     {
-        $description = new Description(['baseUri' => 'http://foo.com']);
+        $description = new Description(array('baseUri' => 'http://foo.com'));
         $this->assertEquals('http://foo.com', $description->getBaseUri());
     }
 
     public function testModelsHaveNames()
     {
-        $desc = [
-            'models' => [
-                'date' => ['type' => 'string'],
-                'user'=> [
+        $desc = array(
+            'models' => array(
+                'date' => array('type' => 'string'),
+                'user'=> array(
                     'type' => 'object',
-                    'properties' => [
-                        'dob' => ['$ref' => 'date']
-                    ]
-                ]
-            ]
-        ];
+                    'properties' => array(
+                        'dob' => array('$ref' => 'date')
+                    )
+                )
+            )
+        );
 
         $s = new Description($desc);
         $this->assertEquals('string', $s->getModel('date')->getType());
@@ -157,9 +157,9 @@ class DescriptionTest extends \PHPUnit_Framework_TestCase
 
     public function testHasOperations()
     {
-        $desc = ['operations' => ['foo' => ['parameters' => ['foo' => [
+        $desc = array('operations' => array('foo' => array('parameters' => array('foo' => array(
             'name' => 'foo'
-        ]]]]];
+        )))));
         $s = new Description($desc);
         $this->assertInstanceOf(Operation::class, $s->getOperation('foo'));
         $this->assertSame($s->getOperation('foo'), $s->getOperation('foo'));
@@ -167,18 +167,18 @@ class DescriptionTest extends \PHPUnit_Framework_TestCase
 
     public function testHasFormatter()
     {
-        $s = new Description([]);
+        $s = new Description(array());
         $this->assertNotEmpty($s->format('date', 'now'));
     }
 
     public function testCanUseCustomFormatter()
     {
         $formatter = $this->getMockBuilder(SchemaFormatter::class)
-            ->setMethods(['format'])
+            ->setMethods(array('format'))
             ->getMock();
         $formatter->expects($this->once())
             ->method('format');
-        $s = new Description([], ['formatter' => $formatter]);
+        $s = new Description(array(), array('formatter' => $formatter));
         $s->format('time', 'now');
     }
 }

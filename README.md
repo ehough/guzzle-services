@@ -12,9 +12,9 @@
 Provides an implementation of the Guzzle Command library that uses Guzzle service descriptions to describe web services, serialize requests, and parse responses into easy to use model structures.
 
 ```php
-use GuzzleHttp\Client;
-use GuzzleHttp\Command\Guzzle\GuzzleClient;
-use GuzzleHttp\Command\Guzzle\Description;
+use Hough\Guzzle\Client;
+use Hough\Guzzle\Command\Guzzle\GuzzleClient;
+use Hough\Guzzle\Command\Guzzle\Description;
 
 $client = new Client();
 $description = new Description([

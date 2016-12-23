@@ -1,8 +1,8 @@
 <?php
-namespace GuzzleHttp\Command\Guzzle\ResponseLocation;
+namespace Hough\Guzzle\Command\Guzzle\ResponseLocation;
 
-use GuzzleHttp\Command\Guzzle\Parameter;
-use GuzzleHttp\Command\ResultInterface;
+use Hough\Guzzle\Command\Guzzle\Parameter;
+use Hough\Guzzle\Command\ResultInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**

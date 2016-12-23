@@ -1,11 +1,11 @@
 <?php
 namespace Guzzle\Tests\Service\Description;
 
-use GuzzleHttp\Command\Guzzle\Description;
-use GuzzleHttp\Command\Guzzle\Operation;
+use Hough\Guzzle\Command\Guzzle\Description;
+use Hough\Guzzle\Command\Guzzle\Operation;
 
 /**
- * @covers \GuzzleHttp\Command\Guzzle\Operation
+ * @covers \Hough\Guzzle\Command\Guzzle\Operation
  */
 class OperationTest extends \PHPUnit_Framework_TestCase
 {
@@ -16,7 +16,7 @@ class OperationTest extends \PHPUnit_Framework_TestCase
 
     public function testOperationIsDataObject()
     {
-        $c = new Operation([
+        $c = new Operation(array(
             'name'               => 'test',
             'summary'            => 'doc',
             'notes'              => 'notes',
@@ -25,21 +25,21 @@ class OperationTest extends \PHPUnit_Framework_TestCase
             'uri'                => '/api/v1',
             'responseModel'      => 'abc',
             'deprecated'         => true,
-            'parameters'         => [
-                'key' => [
+            'parameters'         => array(
+                'key' => array(
                     'required'  => true,
                     'type'      => 'string',
                     'maxLength' => 10,
                     'name'      => 'key'
-                ],
-                'key_2' => [
+                ),
+                'key_2' => array(
                     'required' => true,
                     'type'     => 'integer',
                     'default'  => 10,
                     'name'     => 'key_2'
-                ]
-            ]
-        ]);
+                )
+            )
+        ));
 
         $this->assertEquals('test', $c->getName());
         $this->assertEquals('doc', $c->getSummary());
@@ -53,27 +53,27 @@ class OperationTest extends \PHPUnit_Framework_TestCase
             return $c->toArray();
         }, $c->getParams());
 
-        $this->assertEquals([
-            'key' => [
+        $this->assertEquals(array(
+            'key' => array(
                 'required'  => true,
                 'type'      => 'string',
                 'maxLength' => 10,
                 'name'       => 'key'
-            ],
-            'key_2' => [
+            ),
+            'key_2' => array(
                 'required' => true,
                 'type'     => 'integer',
                 'default'  => 10,
                 'name'     => 'key_2'
-            ]
-        ], $params);
+            )
+        ), $params);
 
-        $this->assertEquals([
+        $this->assertEquals(array(
             'required' => true,
             'type'     => 'integer',
             'default'  => 10,
             'name'     => 'key_2'
-        ], $c->getParam('key_2')->toArray());
+        ), $c->getParam('key_2')->toArray());
 
         $this->assertNull($c->getParam('afefwef'));
         $this->assertArrayNotHasKey('parent', $c->getParam('key_2')->toArray());
@@ -88,16 +88,16 @@ class OperationTest extends \PHPUnit_Framework_TestCase
 
     protected function getTestCommand()
     {
-        return new Operation([
-            'parameters' => [
-                'data' => ['type' => 'string']
-            ]
-        ]);
+        return new Operation(array(
+            'parameters' => array(
+                'data' => array('type' => 'string')
+            )
+        ));
     }
 
     public function testAddsNameToParametersIfNeeded()
     {
-        $command = new Operation(['parameters' => ['foo' => []]]);
+        $command = new Operation(array('parameters' => array('foo' => array())));
         $this->assertEquals('foo', $command->getParam('foo')->getName());
     }
 
@@ -109,17 +109,17 @@ class OperationTest extends \PHPUnit_Framework_TestCase
 
     public function testHasNotes()
     {
-        $o = new Operation(['notes' => 'foo']);
+        $o = new Operation(array('notes' => 'foo'));
         $this->assertEquals('foo', $o->getNotes());
     }
 
     public function testHasData()
     {
-        $o = new Operation(['data' => ['foo' => 'baz', 'bar' => 123]]);
+        $o = new Operation(array('data' => array('foo' => 'baz', 'bar' => 123)));
         $this->assertEquals('baz', $o->getData('foo'));
         $this->assertEquals(123, $o->getData('bar'));
         $this->assertNull($o->getData('wfefwe'));
-        $this->assertEquals(['foo' => 'baz', 'bar' => 123], $o->getData());
+        $this->assertEquals(array('foo' => 'baz', 'bar' => 123), $o->getData());
     }
 
     /**
@@ -128,26 +128,26 @@ class OperationTest extends \PHPUnit_Framework_TestCase
      */
     public function testEnsuresParametersAreArrays()
     {
-        new Operation(['parameters' => ['foo' => true]]);
+        new Operation(array('parameters' => array('foo' => true)));
     }
 
     public function testHasDescription()
     {
-        $s = new Description([]);
-        $o = new Operation([], $s);
+        $s = new Description(array());
+        $o = new Operation(array(), $s);
         $this->assertSame($s, $o->getServiceDescription());
     }
 
     public function testHasAdditionalParameters()
     {
-        $o = new Operation([
-            'additionalParameters' => [
+        $o = new Operation(array(
+            'additionalParameters' => array(
                 'type' => 'string', 'name' => 'binks',
-            ],
-            'parameters' => [
-                'foo' => ['type' => 'integer'],
-            ],
-        ]);
+            ),
+            'parameters' => array(
+                'foo' => array('type' => 'integer'),
+            ),
+        ));
         $this->assertEquals('string', $o->getAdditionalParameters()->getType());
     }
 
@@ -156,58 +156,58 @@ class OperationTest extends \PHPUnit_Framework_TestCase
      */
     protected function getOperation()
     {
-        return new Operation([
+        return new Operation(array(
             'name'       => 'OperationTest',
             'class'      => get_class($this),
-            'parameters' => [
-                'test'          => ['type' => 'object'],
-                'bool_1'        => ['default' => true, 'type' => 'boolean'],
-                'bool_2'        => ['default' => false],
-                'float'         => ['type' => 'numeric'],
-                'int'           => ['type' => 'integer'],
-                'date'          => ['type' => 'string'],
-                'timestamp'     => ['type' => 'string'],
-                'string'        => ['type' => 'string'],
-                'username'      => ['type' => 'string', 'required' => true, 'filters' => 'strtolower'],
-                'test_function' => ['type' => 'string', 'filters' => __CLASS__ . '::strtoupper'],
-            ],
-            'errorResponses' => [
-                [
+            'parameters' => array(
+                'test'          => array('type' => 'object'),
+                'bool_1'        => array('default' => true, 'type' => 'boolean'),
+                'bool_2'        => array('default' => false),
+                'float'         => array('type' => 'numeric'),
+                'int'           => array('type' => 'integer'),
+                'date'          => array('type' => 'string'),
+                'timestamp'     => array('type' => 'string'),
+                'string'        => array('type' => 'string'),
+                'username'      => array('type' => 'string', 'required' => true, 'filters' => 'strtolower'),
+                'test_function' => array('type' => 'string', 'filters' => __CLASS__ . '::strtoupper'),
+            ),
+            'errorResponses' => array(
+                array(
                     'code' => 503,
                     'reason' => 'InsufficientCapacity',
                     'class' => 'Guzzle\\Exception\\RuntimeException',
-                ],
-            ],
-        ]);
+                ),
+            ),
+        ));
     }
 
     public function testCanExtendFromOtherOperations()
     {
-        $d = new Description([
-            'operations' => [
-                'A' => [
-                    'parameters' => [
-                        'A' => [
+        $d = new Description(array(
+            'operations' => array(
+                'A' => array(
+                    'parameters' => array(
+                        'A' => array(
                             'type' => 'object',
-                            'properties' => ['foo' => ['type' => 'string']]
-                        ],
-                        'B' => ['type' => 'string']
-                    ],
+                            'properties' => array('foo' => array('type' => 'string'))
+                        ),
+                        'B' => array('type' => 'string')
+                    ),
                     'summary' => 'foo'
-                ],
-                'B' => [
+                ),
+                'B' => array(
                     'extends' => 'A',
                     'summary' => 'Bar'
-                ],
-                'C' => [
+                ),
+                'C' => array(
                     'extends' => 'B',
                     'summary' => 'Bar',
-                    'parameters' => [
-                        'B' => ['type' => 'number']
-                    ]
-                ]
-            ]
-        ]);
+                    'parameters' => array(
+                        'B' => array('type' => 'number')
+                    )
+                )
+            )
+        ));
 
         $a = $d->getOperation('A');
         $this->assertEquals('foo', $a->getSummary());
