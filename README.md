@@ -1,13 +1,21 @@
-# Guzzle Services
+# ehough/guzzle-services
 
-[![License](https://poser.pugx.org/guzzlehttp/guzzle-services/license)](https://packagist.org/packages/guzzlehttp/guzzle-services)
-[![Build Status](https://travis-ci.org/guzzle/guzzle-services.svg?branch=master)](https://travis-ci.org/guzzle/guzzle-services)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/guzzle/guzzle-services/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/guzzle/guzzle-services/?branch=master)
-[![Code Coverage](https://scrutinizer-ci.com/g/guzzle/guzzle-services/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/guzzle/guzzle-services/?branch=master)
-[![SensioLabsInsight](https://insight.sensiolabs.com/projects/b08be676-b209-40b7-a6df-b6d13e8dff62/mini.png)](https://insight.sensiolabs.com/projects/b08be676-b209-40b7-a6df-b6d13e8dff62)
-[![Latest Stable Version](https://poser.pugx.org/guzzlehttp/guzzle-services/v/stable)](https://packagist.org/packages/guzzlehttp/guzzle-services)
-[![Latest Unstable Version](https://poser.pugx.org/guzzlehttp/guzzle-services/v/unstable)](https://packagist.org/packages/guzzlehttp/guzzle-services)
-[![Total Downloads](https://poser.pugx.org/guzzlehttp/guzzle-services/downloads)](https://packagist.org/packages/guzzlehttp/guzzle-services)
+[![Build Status](https://travis-ci.org/ehough/guzzle-services.svg?branch=develop)](https://travis-ci.org/ehough/guzzle-services)
+[![Latest Stable Version](https://poser.pugx.org/ehough/guzzle-services/v/stable)](https://packagist.org/packages/ehough/guzzle-services)
+[![License](https://poser.pugx.org/ehough/guzzle-services/license)](https://packagist.org/packages/ehough/guzzle-services)
+
+A PHP 5.3-compatible fork of [Guzzle Services](https://github.com/guzzle/services).
+
+# Why?
+
+Sadly, [60%](https://w3techs.com/technologies/details/pl-php/5/all) of all PHP web servers still run PHP 5.4 and lower, but Guzzle needs PHP 5.5 or higher. This fork makes Guzzle 6 compatible with PHP 5.3.29 through 7.1.
+
+# How to Use This Fork
+
+Usage is identical to [`guzzle/services`](https://github.com/guzzle/services), except that the code in this library is 
+namespaced under `Hough\Guzzle` instead of `GuzzleHttp`.
+
+--- 
 
 Provides an implementation of the Guzzle Command library that uses Guzzle service descriptions to describe web services, serialize requests, and parse responses into easy to use model structures.
 
@@ -17,85 +25,40 @@ use Hough\Guzzle\Command\Guzzle\GuzzleClient;
 use Hough\Guzzle\Command\Guzzle\Description;
 
 $client = new Client();
-$description = new Description([
+$description = new Description(array(
 	'baseUri' => 'http://httpbin.org/',
-	'operations' => [
-		'testing' => [
+	'operations' => array(
+		'testing' => array(
 			'httpMethod' => 'GET',
 			'uri' => '/get{?foo}',
 			'responseModel' => 'getResponse',
-			'parameters' => [
-				'foo' => [
+			'parameters' => array(
+				'foo' => array(
 					'type' => 'string',
 					'location' => 'uri'
-				],
-				'bar' => [
+				),
+				'bar' => array(
 					'type' => 'string',
 					'location' => 'query'
-				]
-			]
-		]
-	],
-	'models' => [
-		'getResponse' => [
+				)
+			)
+		)
+	),
+	'models' => array(
+		'getResponse' => array(
 			'type' => 'object',
-			'additionalProperties' => [
+			'additionalProperties' => array(
 				'location' => 'json'
-			]
-		]
-	]
-]);
+			)
+		)
+	)
+));
 
 $guzzleClient = new GuzzleClient($client, $description);
 
-$result = $guzzleClient->testing(['foo' => 'bar']);
+$result = $guzzleClient->testing(array('foo' => 'bar'));
 echo $result['args']['foo'];
 // bar
 ```
-
-## Installing
-
-This project can be installed using Composer:
-
-``composer require guzzlehttp/guzzle-services``
-
-For **Guzzle 5**, use ``composer require guzzlehttp/guzzle-services:0.6``.
-
-**Note:** If Composer is not installed [globally](https://getcomposer.org/doc/00-intro.md#globally) then you may need to run the preceding Composer commands using ``php composer.phar`` (where ``composer.phar`` is the path to your copy of Composer), instead of just ``composer``.
-
-## Plugins
-
-* Load Service description from file [https://github.com/gimler/guzzle-description-loader]
-
-## Transition guide from Guzzle 5.0 to 6.0
- 
-### Change regarding PostField and PostFile
-
-The request locations `postField` and `postFile` were removed in favor of `formParam` and `multipart`. If your description looks like
- 
-```php
-[
-    'baseUri' => 'http://httpbin.org/',
-    'operations' => [
-        'testing' => [
-            'httpMethod' => 'GET',
-            'uri' => '/get{?foo}',
-            'responseModel' => 'getResponse',
-            'parameters' => [
-                'foo' => [
-                    'type' => 'string',
-                    'location' => 'postField'
-                ],
-                'bar' => [
-                    'type' => 'string',
-                    'location' => 'postFile'
-                ]
-            ]
-        ]
-    ],
-]
-```
-
-you need to change `postField` to `formParam` and `postFile` to `multipart`. 
 
 More documentation coming soon.
